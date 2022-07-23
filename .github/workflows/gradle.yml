@@ -33,17 +33,3 @@ jobs:
         with:
           arguments: build
 
-  checkstyle_job:
-    runs-on: ubuntu-latest
-    name: Checkstyle job
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Run check style
-      uses: Boeing1337/RIT@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        java-version: '16.0.2'
-        distribution: 'temurin'
-        reporter: 'github-pr-check'
-        tool_name: 'testtool'
