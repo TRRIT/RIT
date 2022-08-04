@@ -6,105 +6,94 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 
 public class MyList<E> implements List<E> {
-      java.util.List<E> list = new ArrayList<>();
-      Object[] data;
+    Object[] data;
+    java.util.List<String> s = new ArrayList<>();
+    private int size = 0;
 
     public MyList() {
-        this.data = new Object[0];
+
+        this.data = new Object[10];
     }
 
+    private void grow() {
+        Object[] copyData = data;
+        data = new Object[copyData.length * 2];
+        System.arraycopy(copyData, 0, data, 0, copyData.length);
+    }
+
+    private void shiftPlus(int index) {
+        if (size - 1 - index >= 0) {
+            System.arraycopy(data, index, data, index + 1, size - 1 - index);
+        }
+        size++;
+    }
+
+    private void shiftMinus(int index) {
+        if (size - 1 - index >= 0) {
+            System.arraycopy(data, index + 1, data, index, size - 1 - index);
+        }
+        data[size - 1] = null;
+        size--;
+    }
 
     @Override
-
     public E add(E element) {
-
-        list.add(element);
-        Object[] array2 = data;
-        data = new Object[data.length + 1];
-        System.arraycopy(array2, 0, data, 0, array2.length);
-        data[data.length - 1] = element;
+        if (this.size == data.length) {
+            grow();
+        }
+        data[size++] = element;
         return element;
     }
 
     @Override
     public E add(int index, E element) {
-        Object[] array2 = data;
-        data = new Object[data.length + 1];
-        System.arraycopy(array2, 0, data, 0, array2.length);
-        data[index] = element;
-        for (int i = index; i < array2.length; i++) {
-            data[i + 1] = array2[i];
+        if (this.size == data.length) {
+            grow();
         }
-        list.add(index, element);
+        shiftPlus(index);
+        data[index] = element;
         return element;
     }
 
     @Override
     public E replace(E element, int index) {
-
         data[index] = element;
-
-        list.set(index, element);
         return element;
     }
 
     @Override
     public E remove(E element) {
-        Object[] array2 = data;
-        int k = 0;
-        boolean e = true;
-        data = new Object[data.length - 1];
-        for (int i = 0; i < data.length ; i++) {
-            if (array2[i].equals(element)) {
-                if (e) {
-                    e = false;
-                    k++;
-                }
+        for (int i = 0; i < size - 1; i++) {
+            if (data[i].equals(element)) {
+                return remove(i);
             }
-            data[i] = array2[k];
-            k++;
         }
-
-        list.remove(element);
-        return element;
+        return null;
     }
 
     @Override
     public E remove(int index) {
-        Object[] array2 = data;
-        int k = 0;
-        data = new String[data.length - 1];
-        for (int i = 0; i < data.length; i++) {
-            if (i == index) {
-                k++;
-            }
-            data[i] = array2[k];
-            k++;
-        }
-        return list.remove(index);
-
+        Object[] copyArrayData = data;
+        shiftMinus(index);
+        return (E) copyArrayData[index];
     }
 
     @Override
     public int size() {
-        return data.length;
+        return this.size;
     }
-
 
     @Override
     public void reduce() {
-
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < this.size; i++) {
             if (data[i] == null) {
-                for (int r = i; r < data.length - 1; r++) {
-                    data[r] = data[r + 1];
-                }
-                Object[] array2 = data;
-                data = new Object[data.length - 1];
-                System.arraycopy(array2, 0, data, 0, data.length);
+                shiftMinus(i);
                 i--;
             }
         }
+        Object[] copyData = data;
+        data = new Object[this.size];
+        System.arraycopy(copyData, 0, data, 0, data.length);
     }
 
     @Override
@@ -112,7 +101,7 @@ public class MyList<E> implements List<E> {
         if (array.length < data.length) {
             return (E[]) Arrays.copyOf(data, data.length, array.getClass());
         } else {
-            System.arraycopy(this.data, 0, array, 0, this.data.length);
+            System.arraycopy(this.data, 0, array, 0, data.length);
             return array;
         }
     }
