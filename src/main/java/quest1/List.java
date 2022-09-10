@@ -18,8 +18,6 @@ public interface List<E> {
      */
     E add(int index, E element);
 
-    E get(int index);
-
     /**
      * returns an element from the specified index
      *
