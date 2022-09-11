@@ -1,13 +1,10 @@
 package quest1;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.regex.Matcher;
 
 public class MyList<E> implements List<E> {
     Object[] data;
-    java.util.List<String> s = new ArrayList<>();
     private int size = 0;
 
     public MyList() {
@@ -47,18 +44,25 @@ public class MyList<E> implements List<E> {
 
     @Override
     public E add(int index, E element) {
+        E elementReplaced = (E) data[index];
         if (this.size == data.length) {
             grow();
         }
         shiftPlus(index);
         data[index] = element;
-        return element;
+        return elementReplaced;
+    }
+
+    @Override
+    public E get(int index) {
+        return (E) data[index];
     }
 
     @Override
     public E replace(E element, int index) {
+        E elementReplaced = (E) data[index];
         data[index] = element;
-        return element;
+        return elementReplaced;
     }
 
     @Override
